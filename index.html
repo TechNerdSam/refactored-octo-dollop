@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traducteur de Jargon Écolo</title>
+    <!-- Chargement de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chargement de la police 'Inter' depuis Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Définition de la police par défaut et de l'arrière-plan animé */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Arrière-plan futuriste animé en dégradé */
+            background: linear-gradient(-45deg, #0a0e1a, #0f172a, #1e293b, #0a0e1a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow-x: hidden; /* Empêche le défilement horizontal */
+        }
+
+        /* Animation pour l'arrière-plan */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Style pour l'effet de "verre dépoli" (glassmorphism) */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6); /* slate-900 avec 60% d'opacité */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 avec 50% d'opacité */
+        }
+    </style>
+</head>
+<body class="text-gray-200 min-h-screen flex flex-col items-center justify-center p-4 md:p-6 antialiased">
+
+    <div class="w-full max-w-3xl mx-auto">
+        <!-- En-tête -->
+        <header class="text-center mb-8 md:mb-12">
+            <!-- Titre principal avec dégradé de texte -->
+            <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-green-400 mb-3">
+                Traducteur de Jargon Écolo
+            </h1>
+            <p class="text-lg md:text-xl text-gray-400">
+                Le terme éco de la semaine, expliqué comme à un enfant de 10 ans. 🌍
+            </p>
+        </header>
+
+        <!-- Carte principale (simule le contenu mis à jour) -->
+        <main id="translator-card" class="glass-card rounded-2xl shadow-2xl w-full p-8 md:p-12 transition-all duration-500 ease-out" style="opacity: 0; transform: translateY(20px);">
+            <!-- Le terme sera injecté ici par JS -->
+            <h2 id="term-title" class="text-3xl md:text-4xl font-bold text-cyan-200 mb-5">
+                Chargement...
+            </h2>
+            <!-- L'explication sera injectée ici par JS -->
+            <p id="term-explanation" class="text-lg md:text-xl text-gray-200 leading-relaxed">
+                Veuillez patienter pendant que nous récupérons le terme de la semaine.
+            </p>
+        </main>
+
+        <!-- Bouton d'action -->
+        <div class="mt-10 text-center">
+            <button id="new-term-button" 
+                    class="bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/40 focus:outline-none focus:ring-4 focus:ring-cyan-300 focus:ring-opacity-75">
+                Voir un autre terme
+            </button>
+        </div>
+
+        <!-- Pied de page -->
+        <footer class="text-center text-gray-600 text-sm mt-16">
+            &copy; 2025 ÉcoClarté. Tous droits réservés.
+        </footer>
+    </div>
+
+    <script>
+        // --- Début du JavaScript ---
+
+        // La "base de données" de termes.
+        // Ceci simule le contenu qui serait généré par l'IA via la GitHub Action.
+        const jargonDB = [
+            {
+                term: "Compensation Carbone",
+                explanation: "Imagine que tu fais une bêtise (comme polluer). Pour te faire pardonner, tu fais quelque chose de bien (comme planter un arbre) pour 'compenser'. Les entreprises font ça quand elles polluent : elles paient pour des projets qui réduisent le CO2 ailleurs."
+            },
+            {
+                term: "Acidification des Océans",
+                explanation: "Quand on brûle de l'essence, ça libère du CO2. L'océan absorbe beaucoup de ce CO2, mais ça le rend un peu plus 'acide', comme un jus de citron très dilué. C'est difficile pour les coquillages et les coraux de construire leur maison (coquille) dans cette eau."
+            },
+            {
+                term: "Biodiversité",
+                explanation: "C'est la variété de la vie sur Terre. Imagine une boîte de crayons de couleur. Si tu n'as qu'un crayon noir, c'est pauvre. Si tu as 120 crayons différents, c'est riche ! La biodiversité, c'est pareil : plus on a d'animaux et de plantes différentes, mieux la planète fonctionne."
+            },
+            {
+                term: "Énergie Renouvelable",
+                explanation: "C'est de l'énergie qui ne s'épuise pas, comme un puits magique. Le soleil, le vent et l'eau nous en donnent tous les jours, gratuitement, sans polluer la planète, contrairement au pétrole ou au charbon qui vont disparaître."
+            },
+            {
+                term: "Empreinte Carbone",
+                explanation: "C'est comme une 'trace' de pollution que tu laisses derrière toi. Tout ce que tu fais (prendre la voiture, acheter un jouet, manger) utilise de l'énergie et produit du CO2. Ton empreinte carbone, c'est le total de tout ce CO2."
+            },
+            {
+                term: "Permafrost",
+                explanation: "C'est un sol qui est gelé en permanence, comme le fond de ton congélateur. On le trouve dans le Grand Nord. Le problème, c'est qu'avec le réchauffement, il commence à fondre et libère des gaz qui réchauffent encore plus la planète."
+            },
+            {
+                term: "Économie Circulaire",
+                explanation: "Au lieu de fabriquer, utiliser et jeter (comme un gobelet en plastique), on essaie de tout réutiliser, réparer et recycler. C'est comme si tes jouets cassés se transformaient en nouveaux jouets, encore et encore, sans jamais devenir des déchets."
+            }
+        ];
+
+        // Sélection des éléments du DOM
+        const termTitleEl = document.getElementById('term-title');
+        const termExplanationEl = document.getElementById('term-explanation');
+        const newTermButton = document.getElementById('new-term-button');
+        const cardEl = document.getElementById('translator-card');
+
+        let currentTermIndex = -1;
+
+        /**
+         * Affiche un nouveau terme choisi au hasard dans la base de données.
+         */
+        function displayNewTerm() {
+            // Choisir un index aléatoire différent du précédent
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * jargonDB.length);
+            } while (randomIndex === currentTermIndex && jargonDB.length > 1);
+            
+            currentTermIndex = randomIndex;
+            
+            const { term, explanation } = jargonDB[randomIndex];
+
+            // Effet de fondu (fade out)
+            cardEl.style.opacity = 0;
+            cardEl.style.transform = 'translateY(10px)';
+
+            // Mettre à jour le contenu après la transition
+            setTimeout(() => {
+                termTitleEl.textContent = term;
+                termExplanationEl.textContent = explanation;
+                
+                // Effet de fondu (fade in)
+                cardEl.style.opacity = 1;
+                cardEl.style.transform = 'translateY(0)';
+            }, 300); // Doit correspondre à la durée de la transition (ou être proche)
+        }
+
+        // --- Écouteurs d'événements ---
+
+        // Afficher un terme dès le chargement de la page
+        document.addEventListener('DOMContentLoaded', displayNewTerm);
+
+        // Afficher un nouveau terme au clic sur le bouton
+        newTermButton.addEventListener('click', displayNewTerm);
+
+        // --- Fin du JavaScript ---
+    </script>
+</body>
+</html>
