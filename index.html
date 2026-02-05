@@ -1,165 +1,346 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="antialiased">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traducteur de Jargon Écolo</title>
-    <!-- Chargement de Tailwind CSS -->
+    <title>ECO-DECODE | Intelligence Écologique</title>
+    <!-- Tailwind CSS (Moteur de style) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chargement de la police 'Inter' depuis Google Fonts -->
+    <!-- Police Inter (Standard industriel pour la lisibilité) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* Définition de la police par défaut et de l'arrière-plan animé */
+        /* Optimisations globales */
         body {
-            font-family: 'Inter', sans-serif;
-            /* Arrière-plan futuriste animé en dégradé */
-            background: linear-gradient(-45deg, #0a0e1a, #0f172a, #1e293b, #0a0e1a);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            overflow-x: hidden; /* Empêche le défilement horizontal */
+            background-color: #020617; /* Slate 950 */
+            color: #f8fafc;
+            overflow-x: hidden;
         }
 
-        /* Animation pour l'arrière-plan */
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Effet de verre premium (Glassmorphism 2.0) */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
-        
-        /* Style pour l'effet de "verre dépoli" (glassmorphism) */
-        .glass-card {
-            background: rgba(15, 23, 42, 0.6); /* slate-900 avec 60% d'opacité */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 avec 50% d'opacité */
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #22d3ee 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Barre de progression fluide */
+        .progress-bar {
+            transition: width 1s linear;
         }
     </style>
 </head>
-<body class="text-gray-200 min-h-screen flex flex-col items-center justify-center p-4 md:p-6 antialiased">
+<body class="min-h-screen flex items-center justify-center relative overflow-hidden selection:bg-cyan-500 selection:text-white">
 
-    <div class="w-full max-w-3xl mx-auto">
-        <!-- En-tête -->
-        <header class="text-center mb-8 md:mb-12">
-            <!-- Titre principal avec dégradé de texte -->
-            <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-green-400 mb-3">
-                Traducteur de Jargon Écolo
-            </h1>
-            <p class="text-lg md:text-xl text-gray-400">
-                Le terme éco de la semaine, expliqué comme à un enfant de 10 ans. 🌍
-            </p>
-        </header>
-
-        <!-- Carte principale (simule le contenu mis à jour) -->
-        <main id="translator-card" class="glass-card rounded-2xl shadow-2xl w-full p-8 md:p-12 transition-all duration-500 ease-out" style="opacity: 0; transform: translateY(20px);">
-            <!-- Le terme sera injecté ici par JS -->
-            <h2 id="term-title" class="text-3xl md:text-4xl font-bold text-cyan-200 mb-5">
-                Chargement...
-            </h2>
-            <!-- L'explication sera injectée ici par JS -->
-            <p id="term-explanation" class="text-lg md:text-xl text-gray-200 leading-relaxed">
-                Veuillez patienter pendant que nous récupérons le terme de la semaine.
-            </p>
-        </main>
-
-        <!-- Bouton d'action -->
-        <div class="mt-10 text-center">
-            <button id="new-term-button" 
-                    class="bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/40 focus:outline-none focus:ring-4 focus:ring-cyan-300 focus:ring-opacity-75">
-                Voir un autre terme
-            </button>
-        </div>
-
-        <!-- Pied de page -->
-        <footer class="text-center text-gray-600 text-sm mt-16">
-            &copy; 2025 ÉcoClarté. Tous droits réservés.
-        </footer>
+    <!-- 1. BACKDROP ANIMÉ (L'Ambiance) -->
+    <div class="fixed inset-0 w-full h-full pointer-events-none z-0">
+        <!-- Orbe 1 -->
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob"></div>
+        <!-- Orbe 2 -->
+        <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-emerald-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-2000"></div>
+        <!-- Orbe 3 -->
+        <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-4000"></div>
+        <!-- Texture de bruit subtile pour éviter le banding des dégradés -->
+        <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
     </div>
 
-    <script>
-        // --- Début du JavaScript ---
+    <!-- 2. INTERFACE PRINCIPALE -->
+    <main class="w-full max-w-2xl px-6 z-10 relative">
+        
+        <!-- En-tête minimaliste -->
+        <header class="flex items-center justify-between mb-8 opacity-0 animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">ECO-DECODE</h1>
+                    <p class="text-xs text-slate-400 font-medium tracking-wide uppercase">Système de Vulgarisation I.A.</p>
+                </div>
+            </div>
+            
+            <!-- Indicateur de statut "Live" -->
+            <div class="flex items-center space-x-2 bg-slate-900/50 border border-slate-700/50 rounded-full px-3 py-1">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="text-xs font-medium text-slate-300" id="status-text">Auto-Refresh On</span>
+            </div>
+        </header>
 
-        // La "base de données" de termes.
-        // Ceci simule le contenu qui serait généré par l'IA via la GitHub Action.
-        const jargonDB = [
+        <!-- CARTE PRINCIPALE (Le Focus) -->
+        <article id="card-container" class="glass-panel rounded-3xl p-8 md:p-12 relative overflow-hidden transition-all duration-300 hover:border-slate-500/30 group">
+            
+            <!-- Barre de progression (Timer) -->
+            <div class="absolute top-0 left-0 h-1 bg-gradient-to-r from-cyan-400 to-emerald-400 z-20 progress-bar" id="progress-bar" style="width: 100%;"></div>
+
+            <!-- Contenu dynamique -->
+            <div id="content-area" class="transition-opacity duration-500">
+                
+                <!-- Tag / Catégorie -->
+                <div class="inline-flex items-center space-x-2 mb-6 opacity-0 animate-fade-in" style="animation-delay: 0.2s;">
+                    <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-semibold uppercase tracking-wider">
+                        Concept de la semaine
+                    </span>
+                    <span class="text-slate-500 text-xs">•</span>
+                    <span class="text-slate-500 text-xs font-mono">EL15 Protocol</span>
+                </div>
+
+                <!-- Titre du terme -->
+                <h2 id="term-title" class="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight opacity-0 animate-fade-in" style="animation-delay: 0.3s;">
+                    Initialisation...
+                </h2>
+
+                <!-- Explication -->
+                <div class="relative pl-6 border-l-2 border-slate-700/50">
+                    <p id="term-explanation" class="text-lg md:text-xl text-slate-300 leading-relaxed font-light opacity-0 animate-fade-in" style="animation-delay: 0.4s;">
+                        Chargement des données depuis le noyau cognitif.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Actions (Footer de la carte) -->
+            <div class="mt-10 flex items-center justify-between border-t border-white/5 pt-6 opacity-0 animate-fade-in" style="animation-delay: 0.5s;">
+                <div class="flex items-center space-x-2 text-sm text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span id="timer-text">Prochain terme dans 30s</span>
+                </div>
+
+                <button id="next-btn" class="group/btn flex items-center space-x-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-5 py-2.5 rounded-xl transition-all duration-300 active:scale-95">
+                    <span class="text-sm font-medium">Suivant</span>
+                    <svg class="w-4 h-4 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </button>
+            </div>
+
+            <!-- Indication de pause visuelle -->
+            <div id="pause-indicator" class="absolute top-6 right-6 opacity-0 transition-opacity duration-300">
+                <div class="flex items-center space-x-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/5">
+                    <svg class="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    <span class="text-[10px] font-bold text-white uppercase tracking-wider">Pause Lecture</span>
+                </div>
+            </div>
+
+        </article>
+
+        <!-- Footer global -->
+        <footer class="mt-12 text-center">
+            <p class="text-slate-600 text-sm">
+                Propulsé par <span class="text-slate-400 font-medium">Samyn-Antoy</span> • Architecture Neuro-Design
+            </p>
+        </footer>
+
+    </main>
+
+    <!-- 3. LOGIQUE JAVASCRIPT AVANCÉE -->
+    <script>
+        // --- BASE DE DONNÉES COGNITIVE ---
+        const cognitiveData = [
             {
                 term: "Compensation Carbone",
-                explanation: "Imagine que tu fais une bêtise (comme polluer). Pour te faire pardonner, tu fais quelque chose de bien (comme planter un arbre) pour 'compenser'. Les entreprises font ça quand elles polluent : elles paient pour des projets qui réduisent le CO2 ailleurs."
+                explanation: "C'est comme le système du 'Karma'. Si tu fais une bêtise (polluer), tu fais une bonne action (planter un arbre) pour équilibrer la balance. Les entreprises paient pour effacer leur ardoise climatique."
             },
             {
                 term: "Acidification des Océans",
-                explanation: "Quand on brûle de l'essence, ça libère du CO2. L'océan absorbe beaucoup de ce CO2, mais ça le rend un peu plus 'acide', comme un jus de citron très dilué. C'est difficile pour les coquillages et les coraux de construire leur maison (coquille) dans cette eau."
+                explanation: "L'océan boit notre CO2 en excès et devient gazeux comme un soda au citron. Le problème ? Cette acidité dissout littéralement la maison des coquillages et des coraux."
             },
             {
-                term: "Biodiversité",
-                explanation: "C'est la variété de la vie sur Terre. Imagine une boîte de crayons de couleur. Si tu n'as qu'un crayon noir, c'est pauvre. Si tu as 120 crayons différents, c'est riche ! La biodiversité, c'est pareil : plus on a d'animaux et de plantes différentes, mieux la planète fonctionne."
+                term: "Greenwashing",
+                explanation: "C'est du maquillage vert sur une usine grise. Quand une marque prétend être écolo juste parce que son emballage est vert, alors que le produit à l'intérieur détruit la planète."
             },
             {
-                term: "Énergie Renouvelable",
-                explanation: "C'est de l'énergie qui ne s'épuise pas, comme un puits magique. Le soleil, le vent et l'eau nous en donnent tous les jours, gratuitement, sans polluer la planète, contrairement au pétrole ou au charbon qui vont disparaître."
-            },
-            {
-                term: "Empreinte Carbone",
-                explanation: "C'est comme une 'trace' de pollution que tu laisses derrière toi. Tout ce que tu fais (prendre la voiture, acheter un jouet, manger) utilise de l'énergie et produit du CO2. Ton empreinte carbone, c'est le total de tout ce CO2."
+                term: "Sobriété Numérique",
+                explanation: "C'est mettre son ordinateur au régime. Moins de vidéos HD inutiles, moins de mails stockés pour rien, pour éviter que les serveurs (le cloud) ne surchauffent la planète."
             },
             {
                 term: "Permafrost",
-                explanation: "C'est un sol qui est gelé en permanence, comme le fond de ton congélateur. On le trouve dans le Grand Nord. Le problème, c'est qu'avec le réchauffement, il commence à fondre et libère des gaz qui réchauffent encore plus la planète."
+                explanation: "Le congélateur géant de la Terre. C'est un sol gelé depuis des milliers d'années qui retient des virus et du méthane. S'il fond (la porte du frigo reste ouverte), tout ça s'échappe."
             },
             {
-                term: "Économie Circulaire",
-                explanation: "Au lieu de fabriquer, utiliser et jeter (comme un gobelet en plastique), on essaie de tout réutiliser, réparer et recycler. C'est comme si tes jouets cassés se transformaient en nouveaux jouets, encore et encore, sans jamais devenir des déchets."
+                term: "Obsolescence Programmée",
+                explanation: "Quand ton téléphone est conçu pour mourir juste après la garantie. C'est une stratégie industrielle pour te forcer à racheter, créant des montagnes de déchets électroniques."
+            },
+            {
+                term: "Jour du Dépassement",
+                explanation: "Le jour de l'année où on a mangé tout ce que la Terre peut produire en un an. À partir de cette date, on vit à crédit sur les ressources de nos enfants."
             }
         ];
 
-        // Sélection des éléments du DOM
-        const termTitleEl = document.getElementById('term-title');
-        const termExplanationEl = document.getElementById('term-explanation');
-        const newTermButton = document.getElementById('new-term-button');
-        const cardEl = document.getElementById('translator-card');
+        // --- ÉTAT DU SYSTÈME ---
+        const STATE = {
+            currentIndex: -1,
+            timer: null,
+            secondsLeft: 30,
+            isPaused: false,
+            totalDuration: 30
+        };
 
-        let currentTermIndex = -1;
+        // --- ÉLÉMENTS DU DOM ---
+        const ui = {
+            title: document.getElementById('term-title'),
+            expl: document.getElementById('term-explanation'),
+            content: document.getElementById('content-area'),
+            bar: document.getElementById('progress-bar'),
+            timerText: document.getElementById('timer-text'),
+            nextBtn: document.getElementById('next-btn'),
+            card: document.getElementById('card-container'),
+            pauseInd: document.getElementById('pause-indicator'),
+            statusText: document.getElementById('status-text')
+        };
 
-        /**
-         * Affiche un nouveau terme choisi au hasard dans la base de données.
-         */
-        function displayNewTerm() {
-            // Choisir un index aléatoire différent du précédent
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * jargonDB.length);
-            } while (randomIndex === currentTermIndex && jargonDB.length > 1);
-            
-            currentTermIndex = randomIndex;
-            
-            const { term, explanation } = jargonDB[randomIndex];
+        // --- MOTEUR LOGIQUE ---
 
-            // Effet de fondu (fade out)
-            cardEl.style.opacity = 0;
-            cardEl.style.transform = 'translateY(10px)';
-
-            // Mettre à jour le contenu après la transition
-            setTimeout(() => {
-                termTitleEl.textContent = term;
-                termExplanationEl.textContent = explanation;
-                
-                // Effet de fondu (fade in)
-                cardEl.style.opacity = 1;
-                cardEl.style.transform = 'translateY(0)';
-            }, 300); // Doit correspondre à la durée de la transition (ou être proche)
+        function init() {
+            loadNextTerm();
+            startTimer();
+            setupInteractions();
         }
 
-        // --- Écouteurs d'événements ---
+        function loadNextTerm() {
+            // Algorithme de sélection aléatoire sans répétition immédiate
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * cognitiveData.length);
+            } while (newIndex === STATE.currentIndex && cognitiveData.length > 1);
 
-        // Afficher un terme dès le chargement de la page
-        document.addEventListener('DOMContentLoaded', displayNewTerm);
+            STATE.currentIndex = newIndex;
+            const data = cognitiveData[newIndex];
 
-        // Afficher un nouveau terme au clic sur le bouton
-        newTermButton.addEventListener('click', displayNewTerm);
+            // Transition visuelle
+            ui.content.style.opacity = '0';
+            ui.content.style.transform = 'translateY(10px)'; // Léger mouvement
 
-        // --- Fin du JavaScript ---
+            setTimeout(() => {
+                ui.title.innerHTML = highlightKeywords(data.term); // Ajout d'un effet sur le titre si besoin
+                ui.expl.textContent = data.explanation;
+                
+                ui.content.style.opacity = '1';
+                ui.content.style.transform = 'translateY(0)';
+            }, 300);
+
+            // Reset du timer logique
+            resetTimer();
+        }
+
+        // Fonction utilitaire pour le style (facultatif)
+        function highlightKeywords(text) {
+            // Applique simplement la classe gradient au texte
+            return `<span class="text-gradient">${text}</span>`;
+        }
+
+        function startTimer() {
+            if (STATE.timer) clearInterval(STATE.timer);
+            
+            STATE.timer = setInterval(() => {
+                if (!STATE.isPaused) {
+                    STATE.secondsLeft--;
+                    updateUI();
+
+                    if (STATE.secondsLeft <= 0) {
+                        loadNextTerm();
+                    }
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            STATE.secondsLeft = STATE.totalDuration;
+            updateUI();
+        }
+
+        function updateUI() {
+            // Mise à jour de la barre
+            const percentage = (STATE.secondsLeft / STATE.totalDuration) * 100;
+            ui.bar.style.width = `${percentage}%`;
+            
+            // Changement de couleur de la barre selon l'urgence
+            if(percentage < 20) {
+                ui.bar.className = 'absolute top-0 left-0 h-1 bg-rose-500 z-20 progress-bar';
+            } else {
+                ui.bar.className = 'absolute top-0 left-0 h-1 bg-gradient-to-r from-cyan-400 to-emerald-400 z-20 progress-bar';
+            }
+
+            // Mise à jour du texte
+            ui.timerText.textContent = `Prochain terme dans ${STATE.secondsLeft}s`;
+        }
+
+        function setupInteractions() {
+            // 1. Bouton Suivant
+            ui.nextBtn.addEventListener('click', () => {
+                loadNextTerm();
+                // Effet haptique simulé (classe active gérée par CSS mais on peut ajouter du son ici)
+            });
+
+            // 2. Pause intelligente au survol (UX Elite)
+            // Empêche le contenu de changer pendant que l'utilisateur lit
+            ui.card.addEventListener('mouseenter', () => {
+                STATE.isPaused = true;
+                ui.pauseInd.style.opacity = '1';
+                ui.statusText.textContent = "Lecture en cours...";
+                ui.statusText.classList.replace('text-slate-300', 'text-amber-400');
+            });
+
+            ui.card.addEventListener('mouseleave', () => {
+                STATE.isPaused = false;
+                ui.pauseInd.style.opacity = '0';
+                ui.statusText.textContent = "Auto-Refresh On";
+                ui.statusText.classList.replace('text-amber-400', 'text-slate-300');
+            });
+
+            // Support tactile pour mobile
+            ui.card.addEventListener('touchstart', () => {
+                STATE.isPaused = true;
+                ui.pauseInd.style.opacity = '1';
+            }, {passive: true});
+            
+            // Reprise au clic ailleurs ou scroll (simplifié ici par touchstart sur body ou timer reset)
+        }
+
+        // --- LANCEMENT ---
+        document.addEventListener('DOMContentLoaded', init);
+
     </script>
 </body>
 </html>
